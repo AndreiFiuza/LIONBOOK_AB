@@ -6,17 +6,19 @@ const prisma = new PrismaClient()
 
 
 //Função para inserir uma nova musica
-const insertUsuario = async function(usuario){
+const insertCadastro = async function(cadastro){
     try {
     
 
-    let sql = `insert into tbl_usuario ( 
-                                        login, 
+    let sql = `insert into tbl_cadastro ( 
+                                        usuario, 
+                                        email,
                                         senha,
                                         )
                              values     (
-                                         '${usuario.login}',
-                                         '${usuario.senha}'
+                                         '${cadastro.usuario}',
+                                         '${cadastro.email}',
+                                         '${cadastro.senha}'
                                         )`
 
     //Executa o script SQL no banco de dados e aguarda o resultado (true ou false)
@@ -29,7 +31,7 @@ const insertUsuario = async function(usuario){
         return false//Bug no BD
     
     } catch (error) {
-        console.log(usuario)
+        console.log(cadastro)
         return false //Bug de Programação
     }
     
@@ -37,10 +39,11 @@ const insertUsuario = async function(usuario){
 }
 
 //Função para atualizar um instrumento existente
-const updateUsuario = async function(usuario){
+const updateCadastro = async function(cadastro){
     try {
-        let sql = `update tbl_usuario set         login        = '${usuario.login}', 
-                                                  senha     = '${usuario.senha}', 
+        let sql = `update tbl_cadastro set         login        = '${cadastro.usuario}', 
+                                                   email        = '${cadastro.email}',
+                                                   senha     = '${cadastro.senha}', 
                                                   `
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -55,15 +58,15 @@ const updateUsuario = async function(usuario){
 }
 
 //Função para excluir um instrumento existente
-const deleteUsuario = async function(id){
+const deleteCadastro = async function(id){
     try {
         //Script SQL
-        let sql = `delete from tbl_usuario where id = ${id}`
+        let sql = `delete from tbl_cadastro where id = ${id}`
 
         //Encaminha o script SQL para o BD
-        let resultUsuario = await prisma.$executeRawUnsafe(sql)
+        let resultCadastro = await prisma.$executeRawUnsafe(sql)
 
-        if(resultUsuario)
+        if(resultCadastro)
             return true
         else
             return false
@@ -73,10 +76,10 @@ const deleteUsuario = async function(id){
 }
 
 //Função para retornar todos os instrumentos do BD
-const selectAllUsuario = async function(){
+const selectAllCadastro = async function(){
     try {
         //Script SQL
-        let sql = 'select * from tbl_usuario order by id desc'
+        let sql = 'select * from tbl_cadastro order by id desc'
 
         //Encaminha o script SQL para o BD
         let result = await prisma.$queryRawUnsafe(sql)
@@ -91,9 +94,9 @@ const selectAllUsuario = async function(){
 }
 
 //Função para buscar um instrumento pelo ID
-const selectByIdUsuario = async function(id){
+const selectByIdCadastro = async function(id){
     try {
-        let sql = `select * from tbl_usuario where id = ${id}`
+        let sql = `select * from tbl_cadastro where id = ${id}`
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -108,9 +111,9 @@ const selectByIdUsuario = async function(id){
 }
 
 module.exports = {
-    insertUsuario,
-    updateUsuario,
-    deleteUsuario,
-    selectAllUsuario,
-    selectByIdUsuario
+    insertCadastro,
+    updateCadastro,
+    deleteCadastro,
+    selectAllCadastro,
+    selectByIdCadastro
 }

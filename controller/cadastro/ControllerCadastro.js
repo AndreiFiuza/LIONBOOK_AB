@@ -2,26 +2,27 @@
 const message = require('../../modulo/config.js')
 
 //Import do DAO para realizar o CRUD no banco de dados
-const usuarioDAO = require('../../model/DAO/usuario.js')
+const cadastroDAO = require('../../model/DAO/cadastro.js')
 
 //Função para inserir um novo Instrumento 
-const inserirUsuario = async function (usuario, contentType) {
+const inserirCadastro = async function (cadastro, contentType) {
 
     try {
-        console.log(usuario)
+        console.log(cadastro)
 
 
         if(String(contentType).toLowerCase() == 'application/json')
         {   
-            if (usuario.login          == ''        || usuario.login          == null || usuario.login           == undefined || usuario.login.length       > 50  ||
-                usuario.senha          == ''        || usuario.senha          == null || usuario.senha           == undefined || usuario.senha.length       > 50  
+            if (cadastro.usuario          == ''        || cadastro.usuario          == null || cadastro.usuario           == undefined || cadastro.usuario.length       > 50  ||
+                cadastro.email          == ''        || cadastro.email          == null || cadastro.email           == undefined || cadastro.email.length       > 50  ||
+                cadastro.senha          == ''        || cadastro.senha          == null || cadastro.senha           == undefined || cadastro.senha.length       > 50  
             ) {
                 return message.ERROR_REQUIRED_FIELDS //status code 400
             } else {
                 //Encaminhando os dados do instrumento para o DAO realizar o insert no BD
-                let resultUsuario = await usuarioDAO.insertUsuario(usuario)
+                let resultcadastro = await cadastroDAO.insertCadastro(cadastro)
 
-                if (resultUsuario)
+                if (resultcadastro)
                     return message.SUCCESS_CREATED_ITEM //201
                 else
                     return message.ERROR_INTERNAL_SERVER_MODEL //500
@@ -35,29 +36,30 @@ const inserirUsuario = async function (usuario, contentType) {
 }
 
 //Função para atualizar um Instrumento
-const atualizarUsuario = async function (id, usuario, contentType) {
+const atualizarCadastro = async function (id, cadastro, contentType) {
 
     console.log(contentType)
     try {
         if(String(contentType).toLowerCase() == 'application/json')
             {   
-                if (usuario.login       == ''        || usuario.login       == null || usuario.login        == undefined || usuario.login.length    > 100  ||
-                    usuario.senha       == ''        || usuario.senha       == null || usuario.senha        == undefined || usuario.senha.length    > 100  ||
+                if (cadastro.usuario       == ''        || cadastro.usuario       == null || cadastro.usuario        == undefined || cadastro.usuario.length    > 100  ||
+                    cadastro.email       == ''        || cadastro.email       == null || cadastro.email        == undefined || cadastro.email.length    > 100  ||
+                    cadastro.senha       == ''        || cadastro.senha       == null || cadastro.senha        == undefined || cadastro.senha.length    > 100  ||
                     id                  == ''        || id == undefined     || id == null || isNaN(id)
                 ) {
                     return message.ERROR_REQUIRED_FIELDS //status code 400
                 } else {
                     //Verifica se o ID existe no BD
-                    let result = await usuarioDAO.selectByIdUsuario(id)
+                    let result = await cadastroDAO.selectByIdCadastro(id)
 
                     if(result != false || typeof(result) == 'object'){
                         if(result.length > 0){
                             //Update
                             //Adiciona o atributo do ID no JSON com os dados recebidos no corpo da requisição
-                            usuario.id = id
-                            let resultUsuario = await usuarioDAO.updateUsuario(usuario)
+                            cadastro.id = id
+                            let resultcadastro = await cadastroDAO.updateCadastro(cadastro)
 
-                            if(resultUsuario){
+                            if(resultcadastro){
                                 return message.SUCCESS_UPDATE_ITEM //200
                             }else{
                                 return message.ERROR_INTERNAL_SERVER_MODEL //500
@@ -76,18 +78,18 @@ const atualizarUsuario = async function (id, usuario, contentType) {
 }
 
 //Função para excluir um Instrumento
-const excluirUsuario = async function (id) {
+const excluirCadastro = async function (id) {
     try {
         if(id == '' || id == undefined || id == null || isNaN(id)){
 
         }else{
             //Antes de excluir, estamos verificando se existe esse ID
-            let resultUsuario = await usuarioDAO.selectByIdUsuario(id)
+            let resultcadastro = await cadastroDAO.selectByIdCadastro(id)
 
-            if(resultUsuario != false || typeof(resultUsuario) == 'object'){
-                if(resultUsuario.length > 0){
+            if(resultcadastro != false || typeof(resultcadastro) == 'object'){
+                if(resultcadastro.length > 0){
                     //Delete
-                    let result = await usuarioDAO.deleteUsuario(id)
+                    let result = await cadastroDAO.deleteCadastro(id)
 
                     if(result)
                         return message.SUCCESS_DELETE_ITEM //200
@@ -106,22 +108,22 @@ const excluirUsuario = async function (id) {
 }
 
 //Função para retornar uma lista de Instrumentos
-const listarUsuario = async function () {
+const listarCadastro = async function () {
     try {
         //Objeto JSON
-        let dadosUsuario = {}
+        let dadoscadastro = {}
 
         //Chama a Função para retornar as musicas do BD
-        let resultBanda = await usuarioDAO.selectAllUsuario()
+        let resultCadastro = await cadastroDAO.selectAllCadastro()
 
-        if(resultBanda != false || typeof(resultBanda) == 'object'){
-            if(resultBanda.length > 0){
-                dadosUsuario.status = true,
-                dadosUsuario.status_code = 200,
-                dadosUsuario.items = resultUsuario.length
-                dadosUsuario.bandas = resultUsuario
+        if(resultCadastro != false || typeof(resultCadastro) == 'object'){
+            if(resultCadastro.length > 0){
+                dadoscadastro.status = true,
+                dadoscadastro.status_code = 200,
+                dadoscadastro.items = resultCadastro.length
+                dadoscadastro.cadastro = resultCadastro
                 
-                return dadosUsuario
+                return dadoscadastro
             }else{
                 return message.ERROR_NOT_FOUND //404
         }
@@ -134,7 +136,7 @@ const listarUsuario = async function () {
 }
 }
 //Função para retornar um Instrumento pelo ID
-const buscarUsuario = async function (id) {
+const buscarCadastro = async function (id) {
     try {
         if (id == "" || id == undefined || id == null || isNaN(id)){
             return message.ERROR_REQUIRED_FIELDS //400
@@ -142,18 +144,18 @@ const buscarUsuario = async function (id) {
 
         
         //Objeto JSON
-        let dadosUsuario = {}
+        let dadosCadastro = {}
 
         //Chama a Função para retornar as musicas do BD
-        let resultUsuario = await usuarioDAO.selectByIdUsuario(id)
+        let resultCadastro = await cadastroDAO.selectByIdCadastro(id)
 
-        if(resultUsuario != false || typeof(resultUsuario) == 'object'){
-            if(resultUsuario.length > 0){
-                dadosUsuario.status = true,
-                dadosUsuario.status_code = 200,
-                dadosUsuario.usuario = resultUsuario
+        if(resultCadastro != false || typeof(resultCadastro) == 'object'){
+            if(resultCadastro.length > 0){
+                dadosCadastro.status = true,
+                dadosCadastro.status_code = 200,
+                dadosCadastro.cadastro = resultCadastro
                 
-                return dadosUsuario
+                return dadosCadastro
             }else{
                 return message.ERROR_NOT_FOUND //404
         }
@@ -168,9 +170,9 @@ const buscarUsuario = async function (id) {
 }
 
 module.exports = {
-    inserirUsuario,
-    atualizarUsuario,
-    excluirUsuario,
-    listarUsuario,
-    buscarUsuario
+    inserirCadastro,
+    atualizarCadastro,
+    excluirCadastro,
+    listarCadastro,
+    buscarCadastro
 } 

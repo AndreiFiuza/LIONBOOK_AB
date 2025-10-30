@@ -69,13 +69,6 @@ app.get('/v1/controle-usuarios/usuario', cors(), async function(request, respons
     response.json(resultUsuario)
 })
 
-app.get('/v1/controle-usuarios/usuario', cors(), async function(request, response) {
-    let resultUsuario = await controllerUsuario.listarUsuario()
-
-    response.status(resultUsuario.status_code)
-    response.json(resultUsuario)
-})
-
 app.get('/v1/controle-usuarios/usuario/:id', cors(), async function(request, response) {
     
     //Recebe o id
@@ -116,4 +109,71 @@ app.put('/v1/controle-usuarios/usuario/:id', cors(), bodyParserJSON, async funct
 
     response.status(resultUsuario.status_code)
     response.json(resultUsuario)
+})
+
+
+
+
+app.post('/v1/controle-cadastros/cadastro', cors(), bodyParserJSON, async function(request, response){
+
+    //Recebe o content-type da requisição
+    let contentType = request.headers['content-type']
+
+    //Recebe o dados do body da requisição
+    let dadosBody = request.body
+
+    //Chama a função da controller para inserir os dados e aguardar o retorno da função
+    let resultCadastro = await resultCadastro.resultCadastro(dadosBody, contentType)
+
+    response.status(resultCadastro.status_code)
+    response.json(resultCadastro)
+})
+
+app.get('/v1/controle-cadastros/cadastro', cors(), async function(request, response) {
+    let resultCadastro = await controllerCadastro.listarCadastro()
+
+    response.status(resultCadastro.status_code)
+    response.json(resultCadastro)
+})
+
+app.get('/v1/controle-cadastros/cadastro/:id', cors(), async function(request, response) {
+    
+    //Recebe o id
+    let idCadastro = request.params.id
+
+    //Chama a função
+    let resultCadastro = await controllerCadastro.buscarCadastro(idCadastro)
+
+    response.status(resultCadastro.status_code)
+    response.json(resultCadastro)
+})
+
+app.delete('/v1/controle-cadastros/musica/:id', cors(), async function(request, response){
+    
+    //Recebe o ID
+    let idCadastro = request.params.id
+
+    //Chama a função
+    let resultCadastro = await controllerCadastro.excluirCadastro(idCadastro)
+
+    response.status(resultCadastro.status_code)
+    response.json(resultCadastro)
+})
+
+app.put('/v1/controle-cadastros/usuario/:id', cors(), bodyParserJSON, async function (request,response) {
+    
+    //Recebe o contentType da requisição
+    let contentType = request.headers['content-type']
+    
+    //Recebe o ID da música
+    let idCadastro = request.params.id
+
+    //Recebe os dados no corpo da requisição
+    let dadosBody = request.body
+
+    //Chama a função e encamimnha os argumentos de ID, BODY e Content-Type
+    let resultCadastro = await controllerCadastro.atualizarCadastro(idCadastro, dadosBody, contentType)
+
+    response.status(resultCadastro.status_code)
+    response.json(resultCadastro)
 })
